@@ -3,7 +3,9 @@ package create.user.aplication.exception;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 
-public abstract class LocalizedException extends RuntimeException implements MessageSourceResolvable {
+public abstract class LocalizedException
+    extends RuntimeException
+    implements MessageSourceResolvable {
 
   private final String code;
   private final Object[] args;
@@ -33,6 +35,10 @@ public abstract class LocalizedException extends RuntimeException implements Mes
     return new String[]{code};
   }
 
+  public String getCode() {
+    return code;
+  }
+
   @Override
   public Object[] getArguments() {
     return args;
@@ -41,6 +47,11 @@ public abstract class LocalizedException extends RuntimeException implements Mes
   @Override
   public String getDefaultMessage() {
     return code;
+  }
+
+  @Override
+  public String getMessage() {
+    return super.getMessage();
   }
 
 }

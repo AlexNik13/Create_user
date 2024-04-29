@@ -2,6 +2,7 @@ package create.user.aplication.exception;
 
 import org.springframework.http.HttpStatus;
 
+
 public abstract class ConflictException extends LocalizedException {
 
   public ConflictException(String code, Object[] args, Throwable cause) {
