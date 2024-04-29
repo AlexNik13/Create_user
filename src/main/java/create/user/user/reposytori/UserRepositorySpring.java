@@ -8,15 +8,17 @@ import create.user.user.model.User;
 
 public interface UserRepositorySpring {
 
-  User save(User user);
+  User create(User user);
 
   Optional<User> findById(Long id);
 
-  Pageable<User> findByBirthdayFromTo(LocalDate from, LocalDate to, long offset, long limit);
+  Pageable<User> findByBirthdayBetweenFromAndTo(LocalDate from, LocalDate to, long offset, long limit);
 
   Pageable<User> findAll(long offset, long limit);
 
   boolean existsByEmail(String email);
+
+  User update(User user);
 
   void deleteById(Long id);
 

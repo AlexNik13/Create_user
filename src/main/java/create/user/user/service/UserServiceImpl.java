@@ -4,10 +4,13 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import create.user.aplication.utils.NullableUtils;
 import create.user.aplication.utils.Pageable;
-import create.user.user.dto.request.UserCreateRequest;
-import create.user.user.exception.ConflictUnequalEmailException;
+import create.user.user.dto.request.UserCreateOrFullUpdateRequest;
+import create.user.user.dto.request.UserPartialUpdateRequest;
 import create.user.user.exception.ConflictUserBirthdayException;
+import create.user.user.exception.ConflictUserEmailExistsException;
+import create.user.user.exception.NotFoundUserByIdException;
 import create.user.user.model.User;
 import create.user.user.reposytori.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +38,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User create(UserCreateRequest request) {
+  public User create(UserCreateOrFullUpdateRequest request) {
     String email = request.getEmail();
     log.info("Creating user by email: {}", email);
 
-    existsByEmail(email);
+    checkEmailExists(email);
 
     LocalDate birthday = request.getBirthday();
     checkBirthday(birthday);
@@ -64,16 +67,77 @@ public class UserServiceImpl implements UserService {
     return user;
   }
 
-  private void existsByEmail(String email) {
+  @Override
+  public User findById(Long id) {
+    return userRepository.findById(id)
+        .orElseThrow(
+            () -> new NotFoundUserByIdException(id)
+        );
+  }
+
+  private void checkEmailExists(String email) {
     if (userRepository.existsByEmail(email)) {
       log.error("User with email {} already exists", email);
-      throw new ConflictUnequalEmailException(email);
+      throw new ConflictUserEmailExistsException(email);
     }
   }
 
   @Override
-  public Pageable<User> findAll(long offset, long limit) {
-    return userRepository.findAll(offset, limit);
+  public Pageable<User> findByBirthdayBetweenFromAndTo(
+      LocalDate from,
+      LocalDate to,
+      long offset,
+      long limit
+  ) {
+    return userRepository.findByBirthdayBetweenFromAndTo(from, to, offset, limit);
+  }
+
+  @Override
+  public User fullUpdate(Long id, UserCreateOrFullUpdateRequest request) {
+    log.info("User updating all fields by id: {}", id);
+
+    LocalDate birthday = request.getBirthday();
+    checkBirthday(birthday);
+
+    User user = findById(id);
+
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setBirthday(birthday);
+    user.setAddress(request.getAddress());
+    user.setPhone(request.getPhone());
+    user.setModifiedAt(ZonedDateTime.now(clock));
+    User saveUser = userRepository.update(user);
+    log.info("User has be updated all fields by id: {}; ", id);
+    return saveUser;
+  }
+
+  @Override
+  public User partialUpdate(Long id, UserPartialUpdateRequest request) {
+    log.info("User updating partial fields by id: {}", id);
+
+    LocalDate birthday = request.getBirthday();
+    checkBirthday(birthday);
+
+    User user = findById(id);
+
+    NullableUtils.set(user::setEmail, request.getEmail());
+    NullableUtils.set(user::setFirstName, request.getFirstName());
+    NullableUtils.set(user::setLastName, request.getLastName());
+    NullableUtils.set(user::setBirthday, birthday);
+    NullableUtils.set(user::setAddress, request.getAddress());
+    NullableUtils.set(user::setPhone, request.getPhone());
+    user.setModifiedAt(ZonedDateTime.now(clock));
+
+    User saveUser = userRepository.update(user);
+
+    log.info("User has be updated partial fields by id: {}; ", id);
+    return saveUser;
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    userRepository.deleteById(id);
   }
 
   private void checkBirthday(LocalDate birthday) {

@@ -1,5 +1,8 @@
 package create.user.user.reposytori;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 import create.user.aplication.utils.Pageable;
 import create.user.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,22 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public User save(User user) {
-    return delegate.save(user);
+    return delegate.create(user);
+  }
+
+  @Override
+  public Optional<User> findById(long id) {
+    return delegate.findById(id);
+  }
+
+  @Override
+  public Pageable<User> findByBirthdayBetweenFromAndTo(
+      LocalDate from,
+      LocalDate to,
+      long offset,
+      long limit
+  ) {
+    return delegate.findByBirthdayBetweenFromAndTo(from, to, offset, limit);
   }
 
   @Override
@@ -28,8 +46,13 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Pageable<User> findAll(long offset, long limit) {
-    return delegate.findAll(offset, limit);
+  public User update(User user) {
+    return delegate.update(user);
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    delegate.deleteById(id);
   }
 
 }

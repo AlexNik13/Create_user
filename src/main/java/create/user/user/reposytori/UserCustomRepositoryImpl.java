@@ -19,18 +19,15 @@ public class UserCustomRepositoryImpl implements UserRepositorySpring {
   private static final AtomicLong counter = new AtomicLong(0);
 
   @Override
-  public User save(User user) {
+  public User create(User user) {
     Long id;
 
-    if (user.getId() == null) {
-      if (existsByEmail(user.getEmail())) {
-        throw new ConflictUnequalEmailException(user.getEmail());
-      }
-      id = counter.incrementAndGet();
-      user.setId(id);
-    } else {
-      id = user.getId();
+    if (existsByEmail(user.getEmail())) {
+      throw new ConflictUnequalEmailException(user.getEmail());
     }
+
+    id = counter.incrementAndGet();
+    user.setId(id);
 
     userMap.put(id, user);
     return userMap.get(id);
@@ -42,9 +39,12 @@ public class UserCustomRepositoryImpl implements UserRepositorySpring {
   }
 
   @Override
-  public Pageable<User> findByBirthdayFromTo(LocalDate from, LocalDate to, long offset,
-      long limit) {
-
+  public Pageable<User> findByBirthdayBetweenFromAndTo(
+      LocalDate from,
+      LocalDate to,
+      long offset,
+      long limit
+  ) {
     List<User> userList = userMap.values()
         .stream()
         .filter(user -> {
@@ -96,6 +96,25 @@ public class UserCustomRepositoryImpl implements UserRepositorySpring {
     return userMap.values()
         .stream()
         .anyMatch(u -> u.getEmail().toLowerCase().equals(emailLowerCase));
+  }
+
+  @Override
+  public User update(User user) {
+    checkUnequalEmailByUser(user);
+
+    userMap.put(user.getId(), user);
+    return user;
+  }
+
+  private void checkUnequalEmailByUser(User user) {
+    String email = user.getEmail();
+    Long id = user.getId();
+
+    for (User existingUser : userMap.values()) {
+      if (!existingUser.getId().equals(id) && existingUser.getEmail().equals(email)) {
+        throw new ConflictUnequalEmailException(user.getEmail());
+      }
+    }
   }
 
   @Override
