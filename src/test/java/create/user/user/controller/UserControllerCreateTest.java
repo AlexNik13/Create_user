@@ -2,29 +2,23 @@ package create.user.user.controller;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import create.user.user.controller.data.UserData;
 import create.user.user.dto.request.UserCreateOrFullUpdateRequest;
+import create.user.user.dto.response.UserResponse;
 import create.user.user.reposytori.UserRepositorySpring;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class UserControllerCreateTest {
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @Autowired
-  private ObjectMapper objectMapper;
+class UserControllerCreateTest extends UserMockMvcTestBase {
 
   @Autowired
   private UserRepositorySpring userRepository;
@@ -38,18 +32,18 @@ class UserControllerCreateTest {
   void createUserReturnsCreated() throws Exception {
     UserCreateOrFullUpdateRequest request = UserData.getUserCreateOrFullUpdateRequest();
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-        .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(request.getEmail()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(request.getFirstName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value(request.getLastName()))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.birthday").value(request.getBirthday().toString())
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.address").value(request.getAddress()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value(request.getPhone()));
+    UserResponse response = createUser(request);
+
+    Assertions.assertEquals(request.getEmail(), response.getEmail());
+    Assertions.assertEquals(request.getFirstName(), response.getFirstName());
+    Assertions.assertEquals(request.getLastName(), response.getLastName());
+    Assertions.assertEquals(request.getAddress(), response.getAddress());
+    Assertions.assertEquals(request.getBirthday(), response.getBirthday());
+    Assertions.assertEquals(request.getPhone(), response.getPhone());
+
+    Assertions.assertNotNull(response.getCreatedAt());
+    Assertions.assertNotNull(response.getModifiedAt());
+    Assertions.assertNotNull(response.getId());
   }
 
   @Test
@@ -58,9 +52,9 @@ class UserControllerCreateTest {
 
     request.setFirstName(null);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users")
+    super.mockMvc.perform(MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(super.objectMapper.writeValueAsString(request)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
@@ -70,9 +64,9 @@ class UserControllerCreateTest {
 
     request.setBirthday(LocalDate.now());
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users")
+    super.mockMvc.perform(MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(super.objectMapper.writeValueAsString(request)))
         .andExpect(MockMvcResultMatchers.status().isConflict());
   }
 
@@ -80,14 +74,11 @@ class UserControllerCreateTest {
   void createUserSameEmailReturnsConflict() throws Exception {
     UserCreateOrFullUpdateRequest request = UserData.getUserCreateOrFullUpdateRequest();
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-        .andExpect(MockMvcResultMatchers.status().isCreated());
+    createUser(request);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users")
+    super.mockMvc.perform(MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(super.objectMapper.writeValueAsString(request)))
         .andExpect(MockMvcResultMatchers.status().isConflict());
   }
 

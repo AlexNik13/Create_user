@@ -50,7 +50,7 @@ public class UserCustomRepositoryImpl implements UserRepositorySpring {
         .filter(user -> {
           LocalDate birthday = user.getBirthday();
           return (
-              birthday.isBefore(from) || birthday.isEqual(from))
+              birthday.isAfter(from) || birthday.isEqual(from))
               && (birthday.isBefore(to) || birthday.isEqual(to));
         })
         .toList();
