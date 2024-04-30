@@ -18,7 +18,6 @@ public abstract class UserMockMvcTestBase {
   @Autowired
   protected ObjectMapper objectMapper;
 
-
   protected UserResponse createUser(UserCreateOrFullUpdateRequest request) throws Exception {
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)

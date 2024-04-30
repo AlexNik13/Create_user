@@ -25,10 +25,10 @@ class UserCustomRepositoryImplTest {
   }
 
   @Test
-  void saveAndFindAll() {
-    userRepository.save(createUser("1email@email.com"));
-    userRepository.save(createUser("2email@email.com"));
-    userRepository.save(createUser("3email@email.com"));
+  void createAndFindAll() {
+    userRepository.create(createUser("1email@email.com"));
+    userRepository.create(createUser("2email@email.com"));
+    userRepository.create(createUser("3email@email.com"));
     final int totalSave = 3;
 
     final long limit = 2;
@@ -43,18 +43,18 @@ class UserCustomRepositoryImplTest {
   }
 
   @Test
-  void saveUnequalEmail() {
+  void createUnequalEmail() {
     String email1 = "UnequalEmail@email.com";
     String email2 = "unequalEmail@email.com";
 
     User user = new User();
     user.setEmail(email1);
-    userRepository.save(user);
+    userRepository.create(user);
 
     Executable saveWithSameEmail = () -> {
       User userWithSameEmail = new User();
       userWithSameEmail.setEmail(email2);
-      userRepository.save(userWithSameEmail);
+      userRepository.create(userWithSameEmail);
     };
 
     Assertions.assertThrows(ConflictUnequalEmailException.class, saveWithSameEmail);
@@ -64,7 +64,7 @@ class UserCustomRepositoryImplTest {
   void findById() {
     User user = createUser("findById@email.com");
 
-    User saveUser = userRepository.save(user);
+    User saveUser = userRepository.create(user);
 
     User userFindById = userRepository.findById(saveUser.getId()).orElse(null);
 
@@ -86,28 +86,28 @@ class UserCustomRepositoryImplTest {
 
   @Test
   @SuppressWarnings("MagicNumber")
-  void findByBirthdayFromTo() {
+  void findByBirthdayBetweenFromAndTo() {
     User user1 = createUser("1findByBirthdayFromTo@email.com");
     User user2 = createUser("2findByBirthdayFromTo@email.com");
     User user3 = createUser("3findByBirthdayFromTo@email.com");
     User user4 = createUser("4findByBirthdayFromTo@email.com");
 
     user1.setBirthday(LocalDate.of(2000, 1, 1));
-    userRepository.save(user1);
+    userRepository.create(user1);
 
     user2.setBirthday(LocalDate.of(2005, 1, 1));
-    userRepository.save(user2);
+    userRepository.create(user2);
 
     user3.setBirthday(LocalDate.of(2010, 1, 1));
-    userRepository.save(user3);
+    userRepository.create(user3);
 
     user4.setBirthday(LocalDate.of(2015, 1, 1));
-    userRepository.save(user4);
+    userRepository.create(user4);
 
     LocalDate from = LocalDate.of(2005, 1, 1);
     LocalDate to = LocalDate.of(2014, 1, 1);
 
-    Pageable<User> userBirthday = userRepository.findByBirthdayFromTo(from, to, 0, 10);
+    Pageable<User> userBirthday = userRepository.findByBirthdayBetweenFromAndTo(from, to, 0, 10);
 
     Assertions.assertEquals(2, userBirthday.getValues().size());
   }
@@ -116,7 +116,7 @@ class UserCustomRepositoryImplTest {
   void deleteById() {
     User user = createUser("deleteById@email.com");
 
-    User saveUser = userRepository.save(user);
+    User saveUser = userRepository.create(user);
 
     Long id = saveUser.getId();
 
@@ -129,7 +129,7 @@ class UserCustomRepositoryImplTest {
   @Test
   @SuppressWarnings("MagicNumber")
   void deleteAll() {
-    userRepository.save(createUser("deleteAll@email.com"));
+    userRepository.create(createUser("deleteAll@email.com"));
     userRepository.deleteAll();
     final long limit = 10;
 

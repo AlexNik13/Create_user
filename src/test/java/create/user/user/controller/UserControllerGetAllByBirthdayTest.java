@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -88,8 +87,7 @@ class UserControllerGetAllByBirthdayTest extends UserMockMvcTestBase {
             .param("from", from.toString())
             .param("to", to.toString())
             .param("offset", String.valueOf(offset))
-            .param("limit", String.valueOf(limit))
-            .contentType(MediaType.APPLICATION_JSON))
+            .param("limit", String.valueOf(limit)))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
 
