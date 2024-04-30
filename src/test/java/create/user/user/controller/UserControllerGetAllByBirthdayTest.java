@@ -26,11 +26,6 @@ class UserControllerGetAllByBirthdayTest extends UserMockMvcTestBase {
   @Autowired
   private UserRepositorySpring userRepository;
 
-  public UserControllerGetAllByBirthdayTest(
-  ) {
-    super();
-  }
-
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
@@ -44,8 +39,8 @@ class UserControllerGetAllByBirthdayTest extends UserMockMvcTestBase {
     LocalDate from = birthday.minusYears(1);
     LocalDate to = birthday.plusYears(1);
 
-    long offset = 0;
-    long limit = 10;
+    final long offset = 0;
+    final long limit = 10;
 
     Pageable<UserResponse> response = mvcResultGetAllByBirthday(from, to, offset, limit);
 

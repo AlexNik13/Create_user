@@ -28,7 +28,7 @@ class UserControllerGetByIdTest extends UserMockMvcTestBase {
   void getUserByIdReturnsOk() throws Exception {
     UserCreateOrFullUpdateRequest request = UserData.getUserCreateOrFullUpdateRequest();
 
-    UserResponse response = createUser(request);
+    UserResponse response = super.createUser(request);
 
     Long userId = response.getId();
 

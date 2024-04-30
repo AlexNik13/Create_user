@@ -101,6 +101,7 @@ public class UserServiceImpl implements UserService {
 
     User user = findById(id);
 
+    user.setEmail(request.getEmail());
     user.setFirstName(request.getFirstName());
     user.setLastName(request.getLastName());
     user.setBirthday(birthday);
@@ -117,16 +118,16 @@ public class UserServiceImpl implements UserService {
     log.info("User updating partial fields by id: {}", id);
 
     LocalDate birthday = request.getBirthday();
-    checkBirthday(birthday);
+    NullableUtils.applyIfNotNull(this::checkBirthday, birthday);
 
     User user = findById(id);
 
-    NullableUtils.set(user::setEmail, request.getEmail());
-    NullableUtils.set(user::setFirstName, request.getFirstName());
-    NullableUtils.set(user::setLastName, request.getLastName());
-    NullableUtils.set(user::setBirthday, birthday);
-    NullableUtils.set(user::setAddress, request.getAddress());
-    NullableUtils.set(user::setPhone, request.getPhone());
+    NullableUtils.applyIfNotNull(user::setEmail, request.getEmail());
+    NullableUtils.applyIfNotNull(user::setFirstName, request.getFirstName());
+    NullableUtils.applyIfNotNull(user::setLastName, request.getLastName());
+    NullableUtils.applyIfNotNull(user::setBirthday, birthday);
+    NullableUtils.applyIfNotNull(user::setAddress, request.getAddress());
+    NullableUtils.applyIfNotNull(user::setPhone, request.getPhone());
     user.setModifiedAt(ZonedDateTime.now(clock));
 
     User saveUser = userRepository.update(user);

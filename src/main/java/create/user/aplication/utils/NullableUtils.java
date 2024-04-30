@@ -8,15 +8,12 @@ public final class NullableUtils {
   private NullableUtils() {
   }
 
-  public static <T> boolean set(Consumer<T> setter, T value) {
+  public static <T> void applyIfNotNull(Consumer<T> setter, T value) {
     Objects.requireNonNull(setter, "Setter must not be null");
 
     if (value != null) {
       setter.accept(value);
-      return true;
     }
-
-    return false;
   }
 
 }

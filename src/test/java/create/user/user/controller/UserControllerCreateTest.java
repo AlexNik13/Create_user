@@ -32,7 +32,7 @@ class UserControllerCreateTest extends UserMockMvcTestBase {
   void createUserReturnsCreated() throws Exception {
     UserCreateOrFullUpdateRequest request = UserData.getUserCreateOrFullUpdateRequest();
 
-    UserResponse response = createUser(request);
+    UserResponse response = super.createUser(request);
 
     Assertions.assertEquals(request.getEmail(), response.getEmail());
     Assertions.assertEquals(request.getFirstName(), response.getFirstName());
@@ -74,7 +74,7 @@ class UserControllerCreateTest extends UserMockMvcTestBase {
   void createUserSameEmailReturnsConflict() throws Exception {
     UserCreateOrFullUpdateRequest request = UserData.getUserCreateOrFullUpdateRequest();
 
-    createUser(request);
+    super.createUser(request);
 
     super.mockMvc.perform(MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
