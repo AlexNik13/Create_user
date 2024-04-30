@@ -12,7 +12,12 @@ public interface UserRepository {
 
   Optional<User> findById(long id);
 
-  Pageable<User> findByBirthdayBetweenFromAndTo(LocalDate from, LocalDate to, long offset, long limit);
+  Pageable<User> findByBirthdayBetweenFromAndTo(
+      LocalDate from,
+      LocalDate to,
+      long offset,
+      long limit
+  );
 
   boolean existsByEmail(String email);
 

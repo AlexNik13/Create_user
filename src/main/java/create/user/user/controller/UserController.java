@@ -77,7 +77,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @PatchMapping
+  @PatchMapping("/{id}")
   public ResponseEntity<UserResponse> partialUpdateUser(
       @PathVariable Long id,
       @RequestBody @Validated UserPartialUpdateRequest request

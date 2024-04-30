@@ -12,7 +12,12 @@ public interface UserRepositorySpring {
 
   Optional<User> findById(Long id);
 
-  Pageable<User> findByBirthdayBetweenFromAndTo(LocalDate from, LocalDate to, long offset, long limit);
+  Pageable<User> findByBirthdayBetweenFromAndTo(
+      LocalDate from,
+      LocalDate to,
+      long offset,
+      long limit
+  );
 
   Pageable<User> findAll(long offset, long limit);
 
