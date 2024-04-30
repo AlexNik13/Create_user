@@ -65,6 +65,9 @@ For the purpose of this assignment, a simple in-memory repository was implemente
 
 A Dockerfile and docker-compose.yaml were created to facilitate the deployment and running of the project in a Docker environment.
 
+## CORS Configuration
+
+CORS (Cross-Origin Resource Sharing) configuration was implemented to allow requests from different origins. This ensures that the API can be accessed by clients running on different domains. The CORS configuration includes allowing specific HTTP methods, headers, and origins to access the API endpoints securely.
 
 
 # Contact Information
