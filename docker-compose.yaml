@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: managing_users_swagger
+    restart: always
+    ports:
+      - "5577:8080"
+    volumes:
+      - ./doc/openapi:/usr/share/nginx/html/openapi
+    environment:
+      API_URL: openapi/openapi.yaml
+
+  managing_users_back:
+    build: .
+    container_name: managing_users_back
+    ports:
+      - "8113:8113"
+    volumes:
+      - ./target:/app/target
+    depends_on:
+      - swagger-ui
