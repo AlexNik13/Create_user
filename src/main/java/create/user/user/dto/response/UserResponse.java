@@ -3,6 +3,7 @@ package create.user.user.dto.response;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import create.user.user.model.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,8 @@ public class UserResponse {
   private String email;
   private String firstName;
   private String lastName;
+
+  @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate birthday;
   private String address;
   private String phone;

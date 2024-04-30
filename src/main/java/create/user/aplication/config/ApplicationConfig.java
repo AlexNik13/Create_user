@@ -1,4 +1,4 @@
-package create.user.aplication;
+package create.user.aplication.config;
 
 import java.time.Clock;
 
