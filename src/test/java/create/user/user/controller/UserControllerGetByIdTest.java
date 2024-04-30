@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -32,9 +31,6 @@ class UserControllerGetByIdTest extends UserMockMvcTestBase {
     UserResponse response = super.createUser(request);
 
     Long userId = response.getId();
-
-    ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + userId))
-        .andExpect(MockMvcResultMatchers.status().isOk());
 
     super.mockMvc.perform(MockMvcRequestBuilders.get("/users/" + userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
